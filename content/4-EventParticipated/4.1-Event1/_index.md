@@ -135,6 +135,6 @@ Participating in “FCAJ Community Day - Conference Call” was an exciting expe
 
 #### Some photos from the event
 * Add photos of your friends here
-![Image 1](./Image/hinh1.JPG)
-![Image 2](./Image/hinh2.JPG)
+![Image 1](./image/hinh1.JPG)
+![Image 2](./image/hinh2.JPG)
 > Overall, the event did not only provide technical knowledge about AI and cloud, but also gave me more motivation and practical perspectives to apply in my current work.
