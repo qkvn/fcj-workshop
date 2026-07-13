@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://qkvn.github.io/fcj-workshop/"
 relativeURLs = false
 canonifyURLs = false
 defaultContentLanguage = "en"
