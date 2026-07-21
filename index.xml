@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Internship Report</title><link>https://qkvn.github.io/fcj-workshop/</link><description>Recent content on Internship Report</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://qkvn.github.io/fcj-workshop/index.xml" rel="self" type="application/rss+xml"/><item><title>Workshop Overview</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/1.workshop-overview/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/1.workshop-overview/</guid><description>&lt;h1 id="building-asynchronous-image-processing-pipeline-using-amazon-s3-sqs-and-aws-lambda">Building Asynchronous Image Processing Pipeline Using Amazon S3, SQS, and AWS Lambda&lt;/h1>
+&lt;h3 id="workshop-overview-summary">Workshop Overview Summary&lt;/h3>
+&lt;p>This workshop guides you through building an asynchronous image processing pipeline (Event-Driven) on AWS, solving the problem of &amp;ldquo;many users uploading images simultaneously&amp;rdquo; while ensuring system stability, scalability, and cost control.&lt;/p>
+&lt;hr>
+&lt;h3 id="main-objectives">Main Objectives&lt;/h3>
+&lt;ul>
+&lt;li>Design an &lt;strong>S3 → SQS → Lambda&lt;/strong> architecture to process images in a queue, preventing Lambda from being overwhelmed when multiple uploads occur simultaneously.&lt;/li>
+&lt;li>Write Lambda (Python) to:
+&lt;ul>
+&lt;li>Receive messages from SQS (containing events from S3)&lt;/li>
+&lt;li>Load images from S3&lt;/li>
+&lt;li>Call Amazon Rekognition to suggest labels/identify conditions (e.g., damaged packages)&lt;/li>
+&lt;li>Call Amazon Textract to extract text on labels (shipment codes, route information, phone numbers, etc.)&lt;/li>
+&lt;li>Write results to CloudWatch Logs for observation and testing&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="what-you-will-learn">What You Will Learn&lt;/h3>
+&lt;ul>
+&lt;li>Why SQS is needed as a &amp;ldquo;buffer&amp;rdquo; between S3 and Lambda in high-load systems.&lt;/li>
+&lt;li>How to configure IAM Role following the Least Privilege principle (granting only necessary permissions).&lt;/li>
+&lt;li>How to create &amp;amp; configure:
+&lt;ul>
+&lt;li>S3 bucket and Event Notification&lt;/li>
+&lt;li>SQS Standard Queue with important parameters (Visibility Timeout, retention, etc.)&lt;/li>
+&lt;li>Lambda Trigger from SQS and process each message (small batch size for easy observation)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>End-to-end Testing &amp;amp; Validation procedures and cleanup resources to avoid unexpected costs.&lt;/li>
+&lt;/ul></description></item><item><title>Preparing IAM Role for Lambda</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/2.iam-role-prepare/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/2.iam-role-prepare/</guid><description>&lt;h1 id="step-1-preparing-iam-role-for-lambda">Step 1: Preparing IAM Role for Lambda&lt;/h1>
+&lt;h3 id="introduction">Introduction&lt;/h3>
+&lt;p>IAM Role is the permission that Lambda uses to access necessary AWS services in the workshop such as Amazon S3, Amazon SQS, Amazon Rekognition, and Amazon Textract.&lt;/p>
+&lt;p>In this step, you will create an IAM Role for Lambda and attach necessary policies so Lambda can read data, receive messages, and write logs during image processing.&lt;/p>
+&lt;hr>
+&lt;h3 id="implementation-steps">Implementation Steps&lt;/h3>
+&lt;ol>
+&lt;li>Access the &lt;strong>AWS Console&lt;/strong>, find the &lt;strong>IAM&lt;/strong> service.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Find IAM Service" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/2.iam-role-prepare/images/image1.png">&lt;/p></description></item><item><title>Creating Amazon SQS Message Queue</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/3.create-chat-queueaws-sqs/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/3.create-chat-queueaws-sqs/</guid><description>&lt;h1 id="step-2-creating-amazon-sqs-message-queue">Step 2: Creating Amazon SQS Message Queue&lt;/h1>
+&lt;h3 id="introduction">Introduction&lt;/h3>
+&lt;p>Amazon SQS acts as an intermediate queue between Amazon S3 and AWS Lambda.&lt;/p>
+&lt;p>When users upload images to S3, S3 sends a notification to SQS. Lambda reads messages from SQS and processes them gradually, helping the system remain stable when many images are uploaded simultaneously.&lt;/p>
+&lt;hr>
+&lt;h3 id="implementation-steps">Implementation Steps&lt;/h3>
+&lt;ol>
+&lt;li>Access the &lt;strong>AWS Console&lt;/strong>, find the &lt;strong>Amazon SQS&lt;/strong> service, then select &lt;strong>Create queue&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Find Amazon SQS" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/3.create-chat-queueaws-sqs/images/image13.png">&lt;/p></description></item><item><title>Configuring Storage and Events in Amazon S3</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/4.congif-save-and-eventaws-s3/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/4.congif-save-and-eventaws-s3/</guid><description>&lt;h1 id="step-3-configuring-storage-and-events-in-amazon-s3">Step 3: Configuring Storage and Events in Amazon S3&lt;/h1>
+&lt;h3 id="objective">Objective&lt;/h3>
+&lt;p>In this step, you will create an S3 bucket to store images and configure it so that whenever a new image is uploaded, Amazon S3 automatically sends a notification to the SQS queue created in the previous step.&lt;/p>
+&lt;hr>
+&lt;h3 id="31---creating-s3-bucket">3.1 - Creating S3 Bucket&lt;/h3>
+&lt;ol>
+&lt;li>Access &lt;strong>Amazon S3&lt;/strong>, then select &lt;strong>Create bucket&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Create S3 bucket" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/4.congif-save-and-eventaws-s3/images/image19.png">&lt;/p>
+&lt;ol start="2">
+&lt;li>Name the bucket in the format &lt;strong>logistics-raw-images-&amp;lt;your-name&amp;gt;&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>The bucket name must be unique across all of AWS.&lt;/p></description></item><item><title>Creating and Coding AWS Lambda</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/5.createandcode-lambdafunction/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/5.createandcode-lambdafunction/</guid><description>&lt;h1 id="step-4-creating-and-coding-aws-lambda">Step 4: Creating and Coding AWS Lambda&lt;/h1>
+&lt;h3 id="objective">Objective&lt;/h3>
+&lt;p>In this step, you will create a Lambda Function to receive messages from Amazon SQS, read information about images uploaded to Amazon S3, and call AI services like Amazon Rekognition and Amazon Textract to analyze images.&lt;/p>
+&lt;hr>
+&lt;h3 id="41---creating-lambda-function">4.1 - Creating Lambda Function&lt;/h3>
+&lt;ol>
+&lt;li>Access &lt;strong>AWS Lambda&lt;/strong>, select &lt;strong>Create function&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Access AWS Lambda" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image1.png">&lt;/p>
+&lt;ol start="2">
+&lt;li>Select &lt;strong>Author from scratch&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Select Author from scratch" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image2.png">&lt;/p>
+&lt;p>&lt;img alt="Create Lambda function" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image3.png">&lt;/p>
+&lt;ol start="3">
+&lt;li>Configure Lambda Function.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Configure Lambda function" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image4.png">&lt;/p></description></item><item><title>System Testing</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/6.testing-validation/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/6.testing-validation/</guid><description>&lt;h1 id="step-5-system-testing">Step 5: System Testing&lt;/h1>
+&lt;h3 id="objective">Objective&lt;/h3>
+&lt;p>Verify that the entire &lt;strong>S3 -&amp;gt; SQS -&amp;gt; Lambda -&amp;gt; AI&lt;/strong> pipeline works correctly.&lt;/p>
+&lt;p>In this step, you will upload images to S3, check Lambda processing messages from SQS, and view analysis results in CloudWatch Logs.&lt;/p>
+&lt;hr>
+&lt;h3 id="51---preparing-test-images">5.1 - Preparing Test Images&lt;/h3>
+&lt;p>Prepare at least 2 types of images:&lt;/p>
+&lt;ul>
+&lt;li>Images of packages that are dented or torn to check if Amazon Rekognition correctly detects image content.&lt;/li>
+&lt;li>Images with shipping labels containing clear shipment codes to check if Amazon Textract correctly extracts text.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3 id="52---uploading-images-to-s3">5.2 - Uploading Images to S3&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Go to S3 bucket &lt;strong>logistics-raw-images-&amp;lt;your-name&amp;gt;&lt;/strong>, then select &lt;strong>Upload&lt;/strong>.&lt;/p></description></item><item><title>Cleaning Up Resources</title><link>https://qkvn.github.io/fcj-workshop/5-workshop/7.cleanup/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/5-workshop/7.cleanup/</guid><description>&lt;h1 id="step-6-cleaning-up-resources">Step 6: Cleaning Up Resources&lt;/h1>
+&lt;h3 id="objective">Objective&lt;/h3>
+&lt;p>After completing the workshop, you need to delete the resources you created to avoid unexpected costs.&lt;/p>
+&lt;hr>
+&lt;h3 id="1-deleting-sqs-queue">1. Deleting SQS Queue&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Access &lt;strong>Amazon SQS&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Select the queue created in the workshop, then select &lt;strong>Delete&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Delete SQS queue" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/7.cleanup/images/image1.png">&lt;/p>
+&lt;ol start="3">
+&lt;li>Enter &lt;strong>Confirm&lt;/strong> to confirm queue deletion.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Confirm SQS queue deletion" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/7.cleanup/images/image2.png">&lt;/p>
+&lt;hr>
+&lt;h3 id="2-deleting-lambda-function">2. Deleting Lambda Function&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Access &lt;strong>AWS Lambda&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Select the function created in the workshop, then select &lt;strong>Delete&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Delete Lambda function" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/7.cleanup/images/image3.png">&lt;/p></description></item></channel></rss>

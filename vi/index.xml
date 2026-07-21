@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Báo cáo thực tập</title><link>https://qkvn.github.io/fcj-workshop/vi/</link><description>Recent content on Báo cáo thực tập</description><generator>Hugo</generator><language>vi</language><lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://qkvn.github.io/fcj-workshop/vi/index.xml" rel="self" type="application/rss+xml"/><item><title>Tổng quan về Workshop</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/1.workshop-overview/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/1.workshop-overview/</guid><description>&lt;h1 id="xây-dựng-luồng-xử-lý-hình-ảnh-bất-đồng-bộ-sử-dụng-amazon-s3-sqs-và-aws-lambda">Xây dựng luồng xử lý hình ảnh bất đồng bộ sử dụng Amazon S3, SQS và AWS Lambda&lt;/h1>
+&lt;h3 id="tóm-tắt-về-workshop">Tóm tắt về workshop&lt;/h3>
+&lt;p>Workshop này hướng dẫn bạn xây dựng một luồng xử lý ảnh bất đồng bộ (asynchronous) theo mô hình Event‑Driven trên AWS, giải quyết bài toán “nhiều người dùng upload ảnh cùng lúc” nhưng vẫn đảm bảo hệ thống ổn định, dễ mở rộng và kiểm soát chi phí.&lt;/p></description></item><item><title>Chuẩn bị IAM Role cho Lambda</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/2.iam-role-prepare/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/2.iam-role-prepare/</guid><description>&lt;h1 id="bước-1-chuẩn-bị-iam-role-cho-lambda">Bước 1: Chuẩn bị IAM Role cho Lambda&lt;/h1>
+&lt;h3 id="giới-thiệu">Giới thiệu&lt;/h3>
+&lt;p>IAM Role là quyền mà Lambda sử dụng để truy cập các dịch vụ AWS cần thiết trong workshop như Amazon S3, Amazon SQS, Amazon Rekognition và Amazon Textract.&lt;/p>
+&lt;p>Trong bước này, bạn sẽ tạo một IAM Role cho Lambda và gắn các policy cần thiết để Lambda có thể đọc dữ liệu, nhận message và ghi log trong quá trình xử lý ảnh.&lt;/p></description></item><item><title>Tạo hàng đợi tin nhắn Amazon SQS</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/3.create-chat-queueaws-sqs/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/3.create-chat-queueaws-sqs/</guid><description>&lt;h1 id="bước-2-tạo-hàng-đợi-tin-nhắn-amazon-sqs">Bước 2: Tạo hàng đợi tin nhắn Amazon SQS&lt;/h1>
+&lt;h3 id="giới-thiệu">Giới thiệu&lt;/h3>
+&lt;p>Amazon SQS đóng vai trò là hàng đợi trung gian giữa Amazon S3 và AWS Lambda.&lt;/p>
+&lt;p>Khi người dùng tải ảnh lên S3, S3 sẽ gửi thông báo vào SQS. Lambda sẽ đọc message từ SQS và xử lý dần dần, giúp hệ thống ổn định hơn khi có nhiều ảnh được tải lên cùng lúc.&lt;/p>
+&lt;hr>
+&lt;h3 id="các-bước-thực-hiện">Các bước thực hiện&lt;/h3>
+&lt;ol>
+&lt;li>Truy cập &lt;strong>AWS Console&lt;/strong>, tìm dịch vụ &lt;strong>Amazon SQS&lt;/strong>, sau đó chọn &lt;strong>Create queue&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Tìm Amazon SQS" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/3.create-chat-queueaws-sqs/images/image13.png">&lt;/p></description></item><item><title>Cấu hình lưu trữ và sự kiện Amazon S3</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/4.congif-save-and-eventaws-s3/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/4.congif-save-and-eventaws-s3/</guid><description>&lt;h1 id="bước-3-cấu-hình-lưu-trữ-và-sự-kiện-amazon-s3">Bước 3: Cấu hình lưu trữ và sự kiện Amazon S3&lt;/h1>
+&lt;h3 id="mục-tiêu">Mục tiêu&lt;/h3>
+&lt;p>Trong bước này, bạn sẽ tạo S3 bucket để lưu ảnh và cấu hình để mỗi khi có ảnh mới được tải lên, Amazon S3 tự động gửi thông báo vào SQS queue đã tạo ở bước trước.&lt;/p>
+&lt;hr>
+&lt;h3 id="31---tạo-s3-bucket">3.1 - Tạo S3 Bucket&lt;/h3>
+&lt;ol>
+&lt;li>Truy cập &lt;strong>Amazon S3&lt;/strong>, sau đó chọn &lt;strong>Create bucket&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Tạo S3 bucket" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/4.congif-save-and-eventaws-s3/images/image19.png">&lt;/p>
+&lt;ol start="2">
+&lt;li>Đặt tên bucket theo định dạng &lt;strong>logistics-raw-images-&amp;lt;tên-bạn&amp;gt;&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>Tên bucket phải là duy nhất trên toàn bộ AWS.&lt;/p></description></item><item><title>Tạo và viết code cho AWS Lambda</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/5.createandcode-lambdafunction/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/5.createandcode-lambdafunction/</guid><description>&lt;h1 id="bước-4-tạo-và-viết-code-cho-aws-lambda">Bước 4: Tạo và viết code cho AWS Lambda&lt;/h1>
+&lt;h3 id="mục-tiêu">Mục tiêu&lt;/h3>
+&lt;p>Trong bước này, bạn sẽ tạo Lambda Function để nhận message từ Amazon SQS, đọc thông tin ảnh được upload lên Amazon S3 và gọi các dịch vụ AI như Amazon Rekognition và Amazon Textract để phân tích ảnh.&lt;/p>
+&lt;hr>
+&lt;h3 id="41---tạo-lambda-function">4.1 - Tạo Lambda Function&lt;/h3>
+&lt;ol>
+&lt;li>Truy cập &lt;strong>AWS Lambda&lt;/strong>, chọn &lt;strong>Create function&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Truy cập AWS Lambda" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image1.png">&lt;/p>
+&lt;ol start="2">
+&lt;li>Chọn &lt;strong>Author from scratch&lt;/strong>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Chọn Author from scratch" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/5.createandcode-lambdafunction/images/image2.png">&lt;/p></description></item><item><title>Kiểm thử hệ thống</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/6.testing-validation/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/6.testing-validation/</guid><description>&lt;h1 id="bước-5-kiểm-thử-hệ-thống">Bước 5: Kiểm thử hệ thống&lt;/h1>
+&lt;h3 id="mục-tiêu">Mục tiêu&lt;/h3>
+&lt;p>Xác nhận toàn bộ luồng &lt;strong>S3 -&amp;gt; SQS -&amp;gt; Lambda -&amp;gt; AI&lt;/strong> hoạt động đúng.&lt;/p>
+&lt;p>Trong bước này, bạn sẽ upload ảnh lên S3, kiểm tra Lambda xử lý message từ SQS và xem kết quả phân tích trong CloudWatch Logs.&lt;/p>
+&lt;hr>
+&lt;h3 id="51---chuẩn-bị-ảnh-test">5.1 - Chuẩn bị ảnh test&lt;/h3>
+&lt;p>Chuẩn bị ít nhất 2 loại ảnh:&lt;/p>
+&lt;ul>
+&lt;li>Ảnh kiện hàng bị móp hoặc rách để kiểm tra Amazon Rekognition phát hiện đúng nội dung ảnh.&lt;/li>
+&lt;li>Ảnh có nhãn dán với mã vận đơn rõ ràng để kiểm tra Amazon Textract trích xuất đúng văn bản.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3 id="52---tải-ảnh-lên-s3">5.2 - Tải ảnh lên S3&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Vào S3 bucket &lt;strong>logistics-raw-images-&amp;lt;tên-bạn&amp;gt;&lt;/strong>, sau đó chọn &lt;strong>Upload&lt;/strong>.&lt;/p></description></item><item><title>Cleaning Up Resources (VI)</title><link>https://qkvn.github.io/fcj-workshop/vi/5-workshop/7.cleanup/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>https://qkvn.github.io/fcj-workshop/vi/5-workshop/7.cleanup/</guid><description>&lt;h1 id="vi-bước-6-cleaning-up-resources">(VI) Bước 6: Cleaning Up Resources&lt;/h1>
+&lt;h3 id="objective">Objective&lt;/h3>
+&lt;p>Sau khi hoàn thành workshop, bạn cần xóa các tài nguyên đã tạo để tránh phát sinh chi phí.&lt;/p>
+&lt;hr>
+&lt;h3 id="1-xóa-sqs-queue">1. Xóa SQS Queue&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Truy cập &lt;strong>Amazon SQS&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Chọn queue tạo trong workshop, sau đó chọn &lt;strong>Delete&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Xóa SQS queue" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/7.cleanup/images/image1.png">&lt;/p>
+&lt;ol start="3">
+&lt;li>Nhập &lt;strong>Confirm&lt;/strong> để xác nhận xóa queue.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img alt="Xác nhận xóa SQS queue" src="https://qkvn.github.io/fcj-workshop/fcj-workshop/5-workshop/7.cleanup/images/image2.png">&lt;/p>
+&lt;hr>
+&lt;h3 id="2-xóa-lambda-function">2. Xóa Lambda Function&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Truy cập &lt;strong>AWS Lambda&lt;/strong>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Chọn function đã tạo trong workshop, sau đó chọn &lt;strong>Delete&lt;/strong>.&lt;/p></description></item></channel></rss>
