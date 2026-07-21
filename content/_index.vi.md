@@ -25,7 +25,7 @@ chapter: false
 
 &emsp; **Thời gian thực tập:** Từ ngày 04/05/2026 đến ngày 04/08/2025
 
-![Ảnh đại diện của bạn](/images/anhdaidien.jpg)
+![Ảnh đại diện của bạn](/fcj-workshop/images/anhdaidien.jpg)
 
 
 ### Nội dung báo cáo

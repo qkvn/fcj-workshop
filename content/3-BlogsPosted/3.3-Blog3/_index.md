@@ -48,5 +48,5 @@ In multiplayer online games, maintaining a fair and safe gaming environment is a
 
 ### References
 
-- **Post on AWS Study Group FCJ Community:** [View post on Facebook]()
+- **Post on AWS Study Group FCJ Community:** [View post on Facebook](https://www.facebook.com/groups/awsstudygroupfcj/permalink/2208219406609686/#)
 - **Original AWS GameTech Blog Post:** [Ensuring fair play by detecting and preventing profile alterations with Amazon Textract](https://aws.amazon.com/blogs/gametech/ensuring-fair-play-by-detecting-and-preventing-profile-alterations-with-amazon-textract/)
