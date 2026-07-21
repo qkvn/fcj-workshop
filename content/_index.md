@@ -25,7 +25,7 @@ chapter: false
 
 &emsp; **Internship Period:** From 04/05/2026 to 04/08/2025
 
-![Your profile picture](/images/anhdaidien.jpg)
+![Your profile photo](/fcj-Workshop/images/anhdaidien.jpg)
 
 ### Report Content
 
